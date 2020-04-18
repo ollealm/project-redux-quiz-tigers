@@ -1,7 +1,6 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { quiz } from "../reducers/quiz";
-import { Summary } from 'components/Summary'
+import React from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { quiz } from '../reducers/quiz'
 import './CurrentQuestion.css'
 import { Image } from './Image'
 
@@ -18,54 +17,59 @@ export const CurrentQuestion = () => {
     state.quiz.answers.find((a) => a.questionId === question.id)
   );
 
-  console.log(answer);
   const dispatch = useDispatch();
 
   // handle submit function to dispatch
   const handleAnswer = (id, index) => {
-    dispatch(quiz.actions.submitAnswer({ questionId: id, answerIndex: index }));
+    dispatch(quiz.actions.submitAnswer({ questionId: id, answerIndex: index }))
   };
 
   const handleClick = (event) => {
-    dispatch(quiz.actions.goToNextQuestion({}));
+    dispatch(quiz.actions.goToNextQuestion({}))
+  };
+
+  const getButtonClass = (index) => {
+    const indexIsAnswerIndex = answer && answer.answerIndex === index
+    if (indexIsAnswerIndex && answer.isCorrect) {
+      return 'correct-answer'
+    }
+    if (indexIsAnswerIndex && !answer.isCorrect) {
+      return 'wrong-answer'
+    }
+    return ''
   };
 
   if (!question) {
-    return <h1>Oh no! I could not find the current question!</h1>;
+    return <h1>Oh no! I could not find the current question!</h1>
   }
-  {
-    if (quizOver === true) {
-      return (<></>)
-    }
-    else {
-
-      return (
-        <div className="question-container">
-          <Image />
-          <h1>{question.questionText}</h1>
-          <div className="button-container">
-            {question.options.map((option, index) => {
-              return (
-                <button
-                  className={`question-button 
-                    ${index === question.correctAnswerIndex ? (answer ? 'correct-answer' : '') : ''} 
-                    ${answer && !answer.isCorrect ? (answer.answerIndex === index ? "wrong-answer" : "") : ""}`}
-                  onClick={() => handleAnswer(question.id, index)}
-                  disabled={answer ? true : false}
-                >
-                  {option}
-                </button>
-              );
-            })}
-          </div>
-          <button
-            className="next-button"
-            disabled={!answer ? true : false}
-            onClick={handleClick}>Next >
-          </button>
-          <p className="completed" >{question.id}/5</p>
-        </div>
-      );
-    }
+  if (quizOver) {
+    return <></>
   }
+  return (
+    <div className="question-container">
+      <Image />
+      <h1>{question.questionText}</h1>
+      <div className="button-container">
+        {question.options.map((option, index) => {
+          return (
+            <button
+              type="button"
+              className={`question-button ${getButtonClass(index)}`}
+              onClick={() => handleAnswer(question.id, index)}
+              disabled={answer}
+            >
+              {option}
+            </button>
+          );
+        })}
+      </div>
+      <button
+        type="button"
+        className="next-button"
+        disabled={!answer}
+        onClick={handleClick}>Next &gt;
+      </button>
+      <p className="completed">Question {question.id} of 5</p>
+    </div>
+  )
 }
