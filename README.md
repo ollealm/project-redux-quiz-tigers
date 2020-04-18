@@ -6,3 +6,5 @@ An introduction to React Redux as well as a developer team practice. We created 
 ## View it live
 
 https://redux-quiz-meetup.netlify.app/
+
+![Screenshot](redux-quiz-screenshot.png)
